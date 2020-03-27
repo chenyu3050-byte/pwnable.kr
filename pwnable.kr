@@ -9,10 +9,10 @@ if(argc<2){
 printf("pass argv[1] a number\n");
 return 0;
 }
-int fd = atoi( argv[1] ) - 0x1234;
+int fd = atoi( argv[1] ) - 0x1234;//atio turns str=>int 4660-4660(0x1234)=0
 int len = 0;
-len = read(fd, buf, 32);
-if(!strcmp("LETMEWIN\n", buf)){
+len = read(fd, buf, 32);//if fd=0就是从键盘读32个字节到buf缓冲区中
+if(!strcmp("LETMEWIN\n", buf)){//buf==str  要想缓冲区中输入已知
 printf("good job :)\n");
 system("/bin/cat flag");
 exit(0);
@@ -42,7 +42,21 @@ if(argc<2)
 
         //输入命令./edit时,argv[0]=="./edit";
       //  输入命令./edit file.txt时，argv[0]=="./edit",argv[1]=="file.txt";
-//例如：read(0,buf,20) 表示输入20个字节到buf缓冲区里，也就是read函数调用以后会在屏幕中等待我们的输入，并存储在缓冲区里（标准输入）
+//例如：read(0,buf,20) 表示输入20个字节到buf缓冲区里，也就是read函数调用以后会在屏幕中等待我们的输入，并存储在缓冲区里（标准输入），也可以理解为fd(0）文件读取20个bytes到buf缓冲区中
+//缓冲区：缓冲区又称为缓存，它是内存空间的一部分。也就是说，在内存空间中预留了一定的存储空间，这些存储空间用来缓冲输入或输出的数据，这部分预留的空间就叫做缓冲区。缓冲区根据其对应的是输入设备还是输出设备，分为输入缓冲区和输出缓冲区。
+//我们为什么要引入缓冲区呢？缓冲区 分为三种类型：全缓冲、行缓冲和不带缓冲。
+
+//比如我们从磁盘里取信息，我们先把读出的数据放在缓冲区，计算机再直接从缓冲区中取数据，等缓冲区的数据取完后再去磁盘中读取，这样就可以减少磁盘的读写次数，再加上计算机对缓冲区的操作大大快于对磁盘的操作，故应用缓冲区可大大提高计算机的运行速度。
+//全缓冲
+
+//在这种情况下，当填满标准I/O缓存后才进行实际I/O操作。全缓冲的典型代表是对磁盘文件的读写。
+//
+//行缓冲
+
+//在这种情况下，当在输入和输出中遇到换行符时，执行真正的I/O操作。这时，我们输入的字符先存放在缓冲区，等按下回车键换行时才进行实际的I/O操作。典型代表是键盘输入数据。
+//不带缓冲
+//也就是不进行缓冲，标准出错情况stderr是典型代表，这使得出错信息可以直接尽快地显示出来。
+//
 
 //write(1,buf,20)表示输出20字节到buf，并显示在屏幕中（标准输出）
 
@@ -70,8 +84,9 @@ SYNOPSIS
        ssize_t read(int fd, void *buf, size_t count);
 
 DESCRIPTION
-       read()  attempts to read up to count bytes from file descriptor fd into
-       the buffer starting at buf.
+       
+       the buffer starting at buf.read()  
+       attempts to read up to count bytes from file descriptor fd into
 
        On files that support seeking, the read operation commences at the cur‐
        rent  file  offset, and the file offset is incremented by the number of
